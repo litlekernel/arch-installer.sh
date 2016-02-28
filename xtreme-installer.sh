@@ -40,7 +40,7 @@ check_connection() {
 set_locale() {
 	echo -e ${BluBG}
 	clear
-	LOCALE=$(whiptail --nocancel --title "Arch Linux Installer" --menu "Please select your locale" 15 60 5 \
+	LOCALE=$(whiptail --nocancel --title "Arch Linux xtremesystem" --menu "Please select your locale" 15 60 5 \
 	"en_US.UTF-8" "-" \
 	"en_AU.UTF-8" "-" \
 	"en_CA.UTF-8" "-" \
@@ -49,7 +49,7 @@ set_locale() {
 	"Other"       "-"		 3>&1 1>&2 2>&3)
 	if [ "$LOCALE" = "Other" ]; then
 		localelist=$(</etc/locale.gen  awk '{print substr ($1,2) " " ($2);}' | grep -F ".UTF-8" | sed "1d" | sed 's/$/  -/g;s/ UTF-8//g')
-		LOCALE=$(whiptail --title "Arch Linux Installer" --menu "Please enter your desired locale:" 15 60 5  $localelist 3>&1 1>&2 2>&3)
+		LOCALE=$(whiptail --title "Arch Linux xtremesystem" --menu "Please enter your desired locale:" 15 60 5  $localelist 3>&1 1>&2 2>&3)
 		if [ "$?" -gt "0" ]; then
 			set_locale
 		fi
@@ -60,18 +60,18 @@ set_locale() {
 
 set_zone() {
 	zonelist=$(find /usr/share/zoneinfo -maxdepth 1 | sed -n -e 's!^.*/!!p' | grep -v "posix\|right\|zoneinfo\|zone.tab\|zone1970.tab\|W-SU\|WET\|posixrules\|MST7MDT\|iso3166.tab\|CST6CDT" | sort | sed 's/$/ -/g')
-	ZONE=$(whiptail --nocancel --title "Arch Linux Installer" --menu "Please enter your time-zone:" 15 60 5 $zonelist 3>&1 1>&2 2>&3)
+	ZONE=$(whiptail --nocancel --title "Arch Linux xtremesystem" --menu "Please enter your time-zone:" 15 60 5 $zonelist 3>&1 1>&2 2>&3)
 		check_dir=$(find /usr/share/zoneinfo -maxdepth 1 -type d | sed -n -e 's!^.*/!!p' | grep "$ZONE")
 		if [ -n "$check_dir" ]; then
 			sublist=$(find /usr/share/zoneinfo/"$ZONE" -maxdepth 1 | sed -n -e 's!^.*/!!p' | sort | sed 's/$/ -/g')
-			SUBZONE=$(whiptail --title "Arch Linux Installer" --menu "Please enter your sub-zone:" 15 60 5 $sublist 3>&1 1>&2 2>&3)
+			SUBZONE=$(whiptail --title "Arch Linux xtremesystem" --menu "Please enter your sub-zone:" 15 60 5 $sublist 3>&1 1>&2 2>&3)
 			if [ "$?" -gt "0" ]; then
 				set_zone
 			fi
 			chk_dir=$(find /usr/share/zoneinfo/"$ZONE" -maxdepth 1 -type  d | sed -n -e 's!^.*/!!p' | grep "$SUBZONE")
 			if [ -n "$chk_dir" ]; then
 				sublist=$(find /usr/share/zoneinfo/"$ZONE"/"$SUBZONE" -maxdepth 1 | sed -n -e 's!^.*/!!p' | sort | sed 's/$/ -/g')
-				SUB_SUBZONE=$(whiptail --title "Arch Linux Installer" --menu "Please enter your sub-zone:" 15 60 5 $sublist 3>&1 1>&2 2>&3)
+				SUB_SUBZONE=$(whiptail --title "Arch Linux xtremesystem" --menu "Please enter your sub-zone:" 15 60 5 $sublist 3>&1 1>&2 2>&3)
 				if [ "$?" -gt "0" ]; then
 					set_zone
 				fi
@@ -89,8 +89,8 @@ set_keys() {
 
 prepare_drives() {
 	drive=$(lsblk | grep "disk" | grep -v "rom" | awk '{print $1   " "   $4}')
-	DRIVE=$(whiptail --nocancel --title "Arch Linux Installer" --menu "Select the drive you would like to install arch onto:" 15 60 5 $drive 3>&1 1>&2 2>&3)
-	PART=$(whiptail --title "Arch Linux Installer" --menu "Select your desired method of partitioning:\nNOTE Auto Partition will format the selected drive" 15 60 5 \
+	DRIVE=$(whiptail --nocancel --title "Arch Linux xtremesystem" --menu "Select the drive you would like to install arch onto:" 15 60 5 $drive 3>&1 1>&2 2>&3)
+	PART=$(whiptail --title "Arch Linux xtremessytem" --menu "Select your desired method of partitioning:\nNOTE Auto Partition will format the selected drive" 15 60 5 \
 	"Auto Partition Drive"           "-" \
 	"Auto partition encrypted LVM"   "-" \
 	"Manual Partition Drive"         "-" \
@@ -101,13 +101,13 @@ prepare_drives() {
 	elif [ "$PART" == "Return To Menu" ]; then
 		main_menu
 	elif [ "$PART" == "Auto partition encrypted LVM" ] || [ "$PART" == "Auto Partition Drive" ]; then
-		if (whiptail --title "Arch Linux Installer" --defaultno --yesno "WARNING! Will erase all data on /dev/$DRIVE! \n Would you like to contunue?" 10 60) then
+		if (whiptail --title "Arch Linux xtremesystem" --defaultno --yesno "WARNING! Will erase all data on /dev/$DRIVE! \n Would you like to contunue?" 10 60) then
 			sgdisk --zap-all "$DRIVE"
 		else
 			prepare_drives
 		fi
 		SWAP=false
-		if (whiptail --title "Arch Linux Installer" --yesno "Create SWAP space?" 10 60) then
+		if (whiptail --title "Arch Linux xtremessytem" --yesno "Create SWAP space?" 10 60) then
 			d_bytes=$(fdisk -l | grep -w "$DRIVE" | awk '{print $5}')
 			t_bytes=$((d_bytes-2000000000))
 			swapped=false
@@ -125,7 +125,7 @@ prepare_drives() {
 							SWAP=true
 							swapped=true
 						else
-							whiptail --title "Arch Linux Installer" --msgbox "Error not enough space on drive!" 10 60
+							whiptail --title "Arch Linux xtremesystem" --msgbox "Error not enough space on drive!" 10 60
 						fi
 					elif [ "$unit" == "G" ]; then
 						unit_size=$(grep -o '[0-9]*' <<< "$SWAPSPACE")
@@ -137,7 +137,7 @@ prepare_drives() {
 							whiptail --title "Arch Linux Installer" --msgbox "Error not enough space on drive!" 10 60
 						fi
 					else
-						whiptail --title "Arch Linux Installer" --msgbox "Error setting swap! Be sure it is a number ending in 'M' or 'G'" 10 60
+						whiptail --title "Arch Linux xtremesystem" --msgbox "Error setting swap! Be sure it is a number ending in 'M' or 'G'" 10 60
 					fi
 				done
 		fi
@@ -147,13 +147,13 @@ prepare_drives() {
 #			UEFI=true
 #		else
 			GPT=false
-			if (whiptail --title "Arch Linux Installer" --defaultno --yesno "Would you like to use GPT partitioning?" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --defaultno --yesno "Would you like to use GPT partitioning?" 10 60) then
 				GPT=true
 			fi
 #		fi
 		clear
 	else
-		part_tool=$(whiptail --title "Arch Linux Installer" --menu "Please select your desired partitioning tool:" 15 60 5 \
+		part_tool=$(whiptail --title "Arch Linux xtremesystem" --menu "Please select your desired partitioning tool:" 15 60 5 \
 																	"cfdisk"  "Curses Interface" \
 																	"fdisk"   "CLI Partitioning" \
 																	"gdisk"   "GPT Partitioning" \
@@ -268,7 +268,7 @@ prepare_drives() {
 			echo -e ${BluBG}
 			clear
 			if [ "$?" -gt "0" ]; then
-				whiptail --title "Arch Linux Installer" --msgbox "An error was detected during partitioning \n Returing partitioning menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "An error was detected during partitioning \n Returing partitioning menu" 10 60
 				prepare_drives
 			fi
 			partition=$(lsblk | grep "$DRIVE" | grep -v "/\|1K" | sed "1d" | cut -c7- | awk '{print $1" "$4}')
@@ -281,7 +281,7 @@ prepare_drives() {
 				if [ "$?" -eq "0" ]; then
 					mounted=true
 				else
-					whiptail --title "Arch Linux Installer" --msgbox "An error was detected during partitioning \n Returing partitioning menu" 10 60
+					whiptail --title "Arch Linux xtremesystem" --msgbox "An error was detected during partitioning \n Returing partitioning menu" 10 60
 					prepare_drives
 				fi
 			else
@@ -291,19 +291,19 @@ prepare_drives() {
 			until [ "$new_mnt" == "Done" ] 
 				do
 					partition=$(lsblk | grep "$DRIVE" | grep -v "/\|[SWAP]\|1K" | sed "1d" | cut -c7- | awk '{print $1"     "$4}')
-					new_mnt=$(whiptail --title "Arch Linux Installer" --nocancel --menu "Select a partition to create a mount point: \n *Select done when finished*" 15 60 5 $partition "Done" "Continue" 3>&1 1>&2 2>&3)
+					new_mnt=$(whiptail --title "Arch Linux xtremesystem" --nocancel --menu "Select a partition to create a mount point: \n *Select done when finished*" 15 60 5 $partition "Done" "Continue" 3>&1 1>&2 2>&3)
 					if [ "$new_mnt" != "Done" ]; then
-						MNT=$(whiptail --title "Arch Linux Installer" --menu "Select a mount point for /dev/$new_mnt" 15 60 5 $points 3>&1 1>&2 2>&3)				
+						MNT=$(whiptail --title "Arch Linux xtremesystem" --menu "Select a mount point for /dev/$new_mnt" 15 60 5 $points 3>&1 1>&2 2>&3)				
 						if [ "$?" -gt "0" ]; then
 							:
 						elif [ "$MNT" == "SWAP" ]; then
-							if (whiptail --title "Arch Linux Installer" --yesno "Will create swap space on /dev/$new_mnt \n Continue?" 10 60) then
+							if (whiptail --title "Arch Linux xtremesystem" --yesno "Will create swap space on /dev/$new_mnt \n Continue?" 10 60) then
 								wipefs -a -q /dev/"$new_mnt"
 								mkswap /dev/"$new_mnt" &> /dev/null
 								swapon /dev/"$new_mnt" &> /dev/null
 							fi
 						else
-							if (whiptail --title "Arch Linux Installer" --yesno "Will create mount point $MNT with /dev/$new_mnt \n Continue?" 10 60) then
+							if (whiptail --title "Arch Linux xtremesystem" --yesno "Will create mount point $MNT with /dev/$new_mnt \n Continue?" 10 60) then
 								wipefs -a -q /dev/"$new_mnt"
 								mkfs.ext4 -q /dev/"$new_mnt" &> /dev/null &
 								pid=$! pri=1 msg="Please wait while creating filesystem" load
@@ -317,7 +317,7 @@ prepare_drives() {
 		;;
 	esac
 	if [ "$mounted" != "true" ]; then
-		whiptail --title "Arch Linux Installer" --msgbox "An error was detected during partitioning \n Returing to drive partitioning" 10 60
+		whiptail --title "Arch Linux xtremesystem" --msgbox "An error was detected during partitioning \n Returing to drive partitioning" 10 60
 		prepare_drives
 	fi
 	clear
@@ -348,7 +348,7 @@ install_base() {
 				INSTALLED=true
 			else
 				INSTALLED=false
-				whiptail --title "Arch Linux Installer" --msgbox "An error occured returning to menu" 10 60
+				whiptail --title "Arch Linux xtremessytem" --msgbox "An error occured returning to menu" 10 60
 				main_menu
 			fi
 			genfstab -U -p "$ARCH" >> "$ARCH"/etc/fstab
@@ -359,7 +359,7 @@ install_base() {
 			clear
 			configure_system
 		else
-			if (whiptail --title "Arch Linux Installer" --yesno "Ready to install system to $ARCH \n Are you sure you want to exit to menu?" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --yesno "Ready to install system to $ARCH \n Are you sure you want to exit to menu?" 10 60) then
 				main_menu
 			else
 				install_base
@@ -404,14 +404,14 @@ configure_system() {
 		fi
 		arch=$(uname -a | grep -o "x86_64\|i386\|i686")
 		if [ "$arch" == "x86_64" ]; then
-			if (whiptail --title "Arch Linux Installer" --yesno "*64 bit architecture detected\nAdd multilib repos to pacman.conf?" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --yesno "*64 bit architecture detected\nAdd multilib repos to pacman.conf?" 10 60) then
 				sed -i '/\[multilib]$/ {
 				N
 				/Include/s/#//g}' /mnt/etc/pacman.conf
 				multilib=true
 			fi
 		fi
-		if (whiptail --title "Arch Linux Installer" --yesno "Would you like to add archlinuxfr to your pacman.conf?" 10 60) then
+		if (whiptail --title "Arch Linux xtremesystem" --yesno "Would you like to add archlinuxfr to your pacman.conf?" 10 60) then
 			echo -e "[archlinuxfr]\nServer = http://repo.archlinux.fr/\$arch\nSigLevel = Never" >> /mnt/etc/pacman.conf
 		fi
 		system_configured=true
