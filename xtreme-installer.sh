@@ -8,7 +8,7 @@ check_connection() {
 	clear
 	ping -w 1.5 google.com &> /dev/null
 	if [ "$?" -gt "0" ]; then
-		whiptail --title "Test Message Box" --msgbox "No internet connection found. \n *Check your connection and try again" 10 60
+		whiptail --title "Test Message Box" --msgbox "No internet connection found. \n *A testar a sua ligaçao" 10 60
 		exit 1
 	fi
 	start=$(date +%s)
