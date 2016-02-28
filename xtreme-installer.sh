@@ -26,7 +26,7 @@ check_connection() {
 		5[0-9]) down="7" ;;
 		6[0-9]) down="8" ;;
 		[0-9][0-9][0-9]) 
-			if (whiptail --title "Arch Linux Installer" --yesno "Your connection is very slow, this might take a long time...\n *Continue?" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --yesno "Your connection is very slow, this might take a long time...\n *Continue?" 10 60) then
 				down="15"
 			else
 				exit
