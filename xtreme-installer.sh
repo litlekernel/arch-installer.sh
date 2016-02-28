@@ -8,7 +8,7 @@ check_connection() {
 	clear
 	ping -w 1.5 google.com &> /dev/null
 	if [ "$?" -gt "0" ]; then
-		whiptail --title "Test Message Box" --msgbox "No internet connection found. \n *A testar a sua ligaçao" 10 60
+		whiptail --title "Test Message Box" --msgbox "Nao foi encontrada ligaçao a internet. \n *A testar a sua ligaçao" 10 60
 		exit 1
 	fi
 	start=$(date +%s)
@@ -228,7 +228,7 @@ prepare_drives() {
 				ROOT="$(lsblk | grep "$DRIVE" |  awk '{ if (NR==3) print substr ($1,3) }')"
 				
 			fi
-			if (whiptail --title "Arch Linux Installer" --defaultno --yesno "Warning this will encrypt /dev/$DRIVE \n *Continue?" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --defaultno --yesno "Warning this will encrypt /dev/$DRIVE \n *Continue?" 10 60) then
 				lvm pvcreate /dev/"$ROOT" &> /dev/null
 				lvm vgcreate lvm /dev/"$ROOT" &> /dev/null
 				if "$SWAP" ; then
@@ -272,8 +272,8 @@ prepare_drives() {
 				prepare_drives
 			fi
 			partition=$(lsblk | grep "$DRIVE" | grep -v "/\|1K" | sed "1d" | cut -c7- | awk '{print $1" "$4}')
-			ROOT=$(whiptail --nocancel --title "Arch Linux Installer" --menu "Please select your desired root partition first:" 15 60 5 $partition 3>&1 1>&2 2>&3)
-			if (whiptail --title "Arch Linux Installer" --yesno "This will create a new filesystem on the partition. \nAre you sure you want to do this?" 10 60) then
+			ROOT=$(whiptail --nocancel --title "Arch Linux xtremesystem" --menu "Please select your desired root partition first:" 15 60 5 $partition 3>&1 1>&2 2>&3)
+			if (whiptail --title "Arch Linux xtremesystem" --yesno "This will create a new filesystem on the partition. \nAre you sure you want to do this?" 10 60) then
 				wipefs -a -q /dev/"$ROOT"
 				mkfs.ext4 -q /dev/"$ROOT" &> /dev/null &
 				pid=$! pri=1 msg="Please wait while creating filesystem" load
@@ -340,7 +340,7 @@ update_mirrors() {
 
 install_base() {
 	if [[ -n "$ROOT" && "$INSTALLED" == "false" && "$mounted" == "true" ]]; then	
-		if (whiptail --title "Arch Linux Installer" --yesno "Begin installing Arch Linux base onto /dev/$DRIVE?" 10 60) then
+		if (whiptail --title "Arch Linux xtremessytem" --yesno "Begin installing Arch Linux base onto /dev/$DRIVE?" 10 60) then
 			echo -e ${BluBG}
 			pacstrap "$ARCH" base base-devel libnewt &> /dev/null &
 			pid=$! pri="$down" msg="Please wait while we install Arch Linux... \n *This may take awhile" load
@@ -473,7 +473,7 @@ add_user() {
 		chmod +x "$ARCH"/root/set.sh
 		arch-chroot "$ARCH" ./root/set.sh
 		rm "$ARCH"/root/set.sh
-		if (whiptail --title "Arch Linux Installer" --yesno "Enable sudo privelege for members of wheel?" 10 60) then
+		if (whiptail --title "Arch Linux xtremessytem" --yesno "Enable sudo privelege for members of wheel?" 10 60) then
 			sed -i '/%wheel ALL=(ALL) ALL/s/^#//' $ARCH/etc/sudoers
 		fi
 		user_added=true
@@ -487,13 +487,13 @@ add_user() {
 configure_network() {
 	if [ "$INSTALLED" == "true" ]; then
 		#Enable DHCP
-			if (whiptail --title "Arch Linux Installer" --yesno "Enable DHCP at boot?" 10 60) then
+			if (whiptail --title "Arch Linux xtremessytem" --yesno "Enable DHCP at boot?" 10 60) then
 				arch-chroot "$ARCH" systemctl enable dhcpcd.service &> /dev/null
 				clear
 			fi
 			clear
 		#Wireless tools
-			if (whiptail --title "Arch Linux Installer" --yesno "Install wireless tools and WPA supplicant? \n *Necessary for wifi*" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --yesno "Install wireless tools and WPA supplicant? \n *Necessary for wifi*" 10 60) then
 				pacstrap "$ARCH" wireless_tools wpa_supplicant &> /dev/null &
 				pid=$! pri=0.5 msg="Installing wireless tools and WPA supplicant..." load
 			fi
@@ -507,7 +507,7 @@ configure_network() {
 
 install_bootloader() {
 	if [ "$INSTALLED" == "true" ]; then
-		if (whiptail --title "Arch Linux Installer" --yesno "Install GRUB onto /dev/$DRIVE? \n *Required to make bootable" 10 60) then
+		if (whiptail --title "Arch Linux xtremesystem" --yesno "Install GRUB onto /dev/$DRIVE? \n *Required to make bootable" 10 60) then
 			if (whiptail --title "Arch Linux Installer" --yesno "Install os-prober first \n *Required for dualboot" 10 60) then
 				pacstrap "$ARCH" os-prober &> /dev/null &
 				pid=$! pri=0.5 msg="Installing os-prober..." load
@@ -532,7 +532,7 @@ install_bootloader() {
 			pid=$! pri=0.5 msg="Configuring grub..." load
 			graphics
 		else
-			if (whiptail --title "Arch Linux Installer" --defaultno --yesno "WARNING! Are you sure you don't want a bootloader? Your system will not boot!" 10 60) then
+			if (whiptail --title "Arch Linux xtremesystem" --defaultno --yesno "WARNING! Are you sure you don't want a bootloader? Your system will not boot!" 10 60) then
 				main_menu
 			else
 				install_bootloader
@@ -561,7 +561,7 @@ graphics() {
 							"Nvidia"  "NVIDIA Graphics" \
 							"VBOX"    "VirtualBox Guest" 3>&1 1>&2 2>&3)
 							if [ "$?" -gt "0" ]; then
-								if (whiptail --title "Arch Linux Installer" --yesno "Continue without installing graphics drivers? \n Default mesa drivers will be used" 10 60) then
+								if (whiptail --title "Arch Linux xtremessytem" --yesno "Continue without installing graphics drivers? \n Default mesa drivers will be used" 10 60) then
 									GPU=set
 								fi
 							fi
@@ -570,7 +570,7 @@ graphics() {
 									GPU=set
 								;;
 								"AMD")
-									DRIV=$(whiptail --title "Arch Linux Installer" --menu "Select your desired AMD driver \n Cancel if none" 15 60 4 \
+									DRIV=$(whiptail --title "Arch Linux xtremesystem" --menu "Select your desired AMD driver \n Cancel if none" 15 60 4 \
 									"xf86-video-ati"   "Open source AMD driver" 3>&1 1>&2 2>&3)
 									if [ "$?" -eq "0" ]; then
 										if [ "$multilib" == "true" ]; then
@@ -578,14 +578,14 @@ graphics() {
 										else
 											query="xf86-video-ati"
 										fi
-										if (whiptail --title "Arch Linux Installer" --yesno "Enable openGL support? \n Used for games and other graphics" 10 60) then
+										if (whiptail --title "Arch Linux xtremesystem" --yesno "Enable openGL support? \n Used for games and other graphics" 10 60) then
 											query="$query mesa-libgl"
 										fi
 										GPU=set
 									fi
 								;;
 								"Intel")
-									DRIV=$(whiptail --title "Arch Linux Installer" --menu "Select your desired Intel driver \n Cancel if none" 15 60 4 \
+									DRIV=$(whiptail --title "Arch Linux xtremessytem" --menu "Select your desired Intel driver \n Cancel if none" 15 60 4 \
 									"xf86-video-intel"     "Open source Intel driver" 3>&1 1>&2 2>&3)
 									if [ "$?" -eq "0" ]; then
 										if [ "$multilib" == "true" ]; then
@@ -593,14 +593,14 @@ graphics() {
 										else
 											query="xf86-video-intel"
 										fi
-										if (whiptail --title "Arch Linux Installer" --yesno "Enable openGL support? \n Used for games and other graphics" 10 60) then
+										if (whiptail --title "Arch Linux xtremesystem" --yesno "Enable openGL support? \n Used for games and other graphics" 10 60) then
 											query="$query mesa-libgl"
 										fi
 										GPU=set
 									fi
 								;;
 								"Nvidia")
-									DRIV=$(whiptail --title "Arch Linux Installer" --menu "Select your desired Intel driver \n Cancel if none" 15 60 4 \
+									DRIV=$(whiptail --title "Arch Linux xtremessytem" --menu "Select your desired Intel driver \n Cancel if none" 15 60 4 \
 									"nvidia"       "Latest stable nvidia" \
 									"nvidia-340xx" "Legacy 340xx branch" \
 									"nvidia-304xx" "Legaxy 304xx branch" 3>&1 1>&2 2>&3)
@@ -614,7 +614,7 @@ graphics() {
 									fi
 								;;
 								"VBOX")
-									DRIV=$(whiptail --title "Arch Linux Installer" --menu "Provides graphics and features for virtualbox guests:" 15 60 4 \
+									DRIV=$(whiptail --title "Arch Linux xtremesystem" --menu "Provides graphics and features for virtualbox guests:" 15 60 4 \
 									"virtualbox-guest-additions" "-" 3>&1 1>&2 2>&3)
 									if [ "$?" -eq "0" ]; then
 										query="virtualbox-guest-utils"
@@ -633,7 +633,7 @@ graphics() {
 		fi
 		if [ "$x" == "true" ]; then
 			if (whiptail --title "Arch Linux Installer" --yesno "Would you like to install a desktop enviornment or window manager?" 10 60) then
-				DE=$(whiptail --title  "Arch Linux Installer" --menu "Select your desired enviornment:" 15 60 6 \
+				DE=$(whiptail --title  "Arch Linux xtremesystem" --menu "Select your desired enviornment:" 15 60 6 \
 				"xfce4"    "Light  DE" \
 				"i3"       "Tiling WM" \
 				"mate"     "Light DE" \
@@ -645,18 +645,18 @@ graphics() {
 				"awesome"  "Awesome WM" \
 				"dwm"      "Dynamic WM" 3>&1 1>&2 2>&3)
 				if [ "$?" -gt "0" ]; then
-					if (whiptail --title "Arch Linux Installer" --yesno "Are you sure you sure you dont want a desktop? \nYou will be booted into a command line" 10 60) then
+					if (whiptail --title "Arch Linux xtremesystem" --yesno "Are you sure you sure you dont want a desktop? \nYou will be booted into a command line" 10 60) then
 						install_software
 					fi
 				fi
 				case "$DE" in
 					"xfce4") start_term="exec startxfce4"
-						if (whiptail --title "Arch Linux Installer" --yesno "Install xfce4 goodies?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install xfce4 goodies?" 10 60) then
 							envr="xfce4 xfce4-goodies"
 						else
 							envr="xfce4"
 						fi
-						if (whiptail --title "Arch Linux Installer" --yesno "Install SLiM display manager?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install SLiM display manager?" 10 60) then
 							envr="$envr slim archlinux-themes-slim"
 							DM="slim.service"
 							if [ "$user_added" == "true" ]; then
@@ -674,7 +674,7 @@ graphics() {
 						fi
 					;;
 					"gnome")
-						if (whiptail --title "Arch Linux Installer" --yesno "Install gnome extras?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install gnome extras?" 10 60) then
 							envr="gnome gnome-extra"
 							extra_down=true post_down="$down" down=$((down+4))
 						else
@@ -683,12 +683,12 @@ graphics() {
 						DM="gdm.service"
 					;;
 					"mate") start_term="exec mate-session"
-						if (whiptail --title "Arch Linux Installer" --yesno "Install mate extras?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install mate extras?" 10 60) then
 							envr="mate mate-extra"
 						else
 							envr="mate"
 						fi
-						if (whiptail --title "Arch Linux Installer" --yesno "Install SLiM display manager?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install SLiM display manager?" 10 60) then
 							envr="$envr slim archlinux-themes-slim"
 							DM="slim.service"
 							if [ "$user_added" == "true" ]; then
@@ -700,7 +700,7 @@ graphics() {
 					;;
 					"lxde")
 						envr="lxde"
-						if (whiptail --title "Arch Linux Installer" --yesno "Install SLiM display manager?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install SLiM display manager?" 10 60) then
 							envr="$envr slim archlinux-themes-slim"
 							DM="slim.service"
 							if [ "$user_added" == "true" ]; then
@@ -713,7 +713,7 @@ graphics() {
 						fi
 					;;
 					"openbox") envr="openbox" start_term="exec openbox-session"
-						if (whiptail --title "Arch Linux Installer" --yesno "Install SLiM display manager?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install SLiM display manager?" 10 60) then
 							envr="$envr slim archlinux-themes-slim"
 							DM="slim.service"
 							if [ "$user_added" == "true" ]; then
@@ -725,7 +725,7 @@ graphics() {
 						
 					;;
 					"fluxbox") envr="fluxbox" start_term="exec startfluxbox"
-						if (whiptail --title "Arch Linux Installer" --yesno "Install SLiM display manager?" 10 60) then
+						if (whiptail --title "Arch Linux xtremesystem" --yesno "Install SLiM display manager?" 10 60) then
 							envr="$envr slim archlinux-themes-slim"
 							DM="slim.service"
 							if [ "$user_added" == "true" ]; then
@@ -756,7 +756,7 @@ graphics() {
 					fi
 				fi
 			else
-				if (whiptail --title "Arch Linux Installer" --yesno "Are you sure you sure you dont want a desktop? \nYou will be booted into a command line" 10 60) then				
+				if (whiptail --title "Arch Linux xtremessytem" --yesno "Are you sure you sure you dont want a desktop? \nYou will be booted into a command line" 10 60) then				
 					install_software
 				else
 					graphics
@@ -772,8 +772,8 @@ graphics() {
 
 install_software() {
 	if [[ "$INSTALLED" == "true" && "$loader_installed" == "true" ]]; then
-		if (whiptail --title "Arch Linux Installer" --yesno "Would you like to install some common software?" 10 60) then
-			software=$(whiptail --title "Arch Linux Installer" --checklist "Choose your desired software \nUse spacebar to check/uncheck \npress enter when finished" 20 60 10 \
+		if (whiptail --title "Arch Linux xtremessytem" --yesno "Would you like to install some common software?" 10 60) then
+			software=$(whiptail --title "Arch Linux xtremesystem" --checklist "Choose your desired software \nUse spacebar to check/uncheck \npress enter when finished" 20 60 10 \
 						"openssh" "Secure Shell Deamon" ON \
 						"vim" 	  	  "Popular Text Editor" ON \
 						"zsh"     	  "The Z shell" ON \
@@ -810,11 +810,11 @@ install_software() {
 
 reboot_system() {
 	if [[ "$INSTALLED" == "true" && "$loader_installed" == "true" ]]; then	
-		if (whiptail --title "Arch Linux Installer" --yesno "Install process complete! Reboot now?" 10 60) then
+		if (whiptail --title "Arch Linux xtremesystem" --yesno "Install process complete! Reboot now?" 10 60) then
 			umount -R $ARCH
 			reboot
 		else
-			if (whiptail --title "Arch Linux Installer" --yesno "System fully installed \nWould you like to unmount?" 10 60) then
+			if (whiptail --title "Arch Linux xtremessytemr" --yesno "System fully installed \nWould you like to unmount?" 10 60) then
 				umount -R "$ARCH"
 				exit
 			else
@@ -822,7 +822,7 @@ reboot_system() {
 			fi
 		fi
 	else
-		if (whiptail --title "Arch Linux Installer" --yesno "Install not complete, are you sure you want to reboot?" 10 60) then
+		if (whiptail --title "Arch Linux xtremesystem" --yesno "Install not complete, are you sure you want to reboot?" 10 60) then
 			umount -R $ARCH
 			reboot
 		else
@@ -843,11 +843,11 @@ load() {
     	            done
                 echo 100
                 sleep 1
-                } | whiptail --title "Arch Linux Installer" --gauge "$msg" 8 78 0
+                } | whiptail --title "Arch Linux xtremesystem" --gauge "$msg" 8 78 0
 }
 
 main_menu() {
-	menu_item=$(whiptail --nocancel --title "Arch Linux Installer" --menu "Menu Items:" 15 60 5 \
+	menu_item=$(whiptail --nocancel --title "Arch Linux xtremesystem" --menu "Menu Items:" 15 60 5 \
 		"Set Locale"            "-" \
 		"Set Timezone"          "-" \
 		"Set Keymap"            "-" \
@@ -866,28 +866,28 @@ main_menu() {
 	case "$menu_item" in
 		"Set Locale" ) 
 			if [ "$locale_set" == "true" ]; then
-				whiptail --title "Arch Linux Installer" --msgbox "Locale already set, returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "Locale already set, returning to menu" 10 60
 				main_menu
 			fi	
 			set_locale
 		;;
 		"Set Timezone")
 			if [ "$zone_set" == "true" ]; then
-				whiptail --title "Arch Linux Installer" --msgbox "Timezone already set, returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "Timezone already set, returning to menu" 10 60
 				main_menu
 			fi	
 			 set_zone
 		;;
 		"Set Keymap")
 			if [ "$keys_set" == "true" ]; then
-				whiptail --title "Arch Linux Installer" --msgbox "Keymap already set, returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "Keymap already set, returning to menu" 10 60
 				main_menu
 			fi	
 			set_keys
 		;;
 		"Partition Drive")
 			if [ "$mounted" == "true" ]; then
-				whiptail --title "Arch Linux Installer" --msgbox "Drive already mounted, try install base system \n returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "Drive already mounted, try install base system \n returning to menu" 10 60
 				main_menu
 			fi	
  			prepare_drives
@@ -900,7 +900,7 @@ main_menu() {
 			if [ "$INSTALLED" == "true" ]; then
 				configure_system
 			else
-				whiptail --title "Arch Linux Installer" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
+				whiptail --title "Arch Linux xtremessytem" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
 				main_menu
 			fi
 		;;
@@ -908,7 +908,7 @@ main_menu() {
 			if [ "$INSTALLED" == "true" ]; then
 				set_hostname
 			else
-				whiptail --title "Arch Linux Installer" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
 				main_menu
 			fi
 		;;
@@ -916,7 +916,7 @@ main_menu() {
 			if [ "$INSTALLED" == "true" ]; then
 				add_user
 			else
-				whiptail --title "Arch Linux Installer" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
 				main_menu
 			fi
 		;;
@@ -924,7 +924,7 @@ main_menu() {
 			if [ "$INSTALLED" == "true" ]; then
 				configure_network
 			else
-				whiptail --title "Arch Linux Installer" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
 				main_menu
 			fi
 		;;
@@ -932,7 +932,7 @@ main_menu() {
 			if [ "$INSTALLED" == "true" ]; then
 				install_bootloader
 			else
-				whiptail --title "Arch Linux Installer" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "The system hasn't been installed yet \n returning to menu" 10 60
 				main_menu
 			fi
 		;;
@@ -944,10 +944,10 @@ main_menu() {
 		;;
 		"Exit Installer")
 			if [[ "$INSTALLED" == "true" && "$loader_installed" == "true" ]]; then
-				whiptail --title "Arch Linux Installer" --msgbox "System fully installed \n Exiting arch installer" 10 60
+				whiptail --title "Arch Linux xtremesystem" --msgbox "System fully installed \n Exiting arch installer" 10 60
 				exit
 			else
-				if (whiptail --title "Arch Linux Installer" --yesno "System not installed yet \n Are you sure you want to exit?" 10 60) then
+				if (whiptail --title "Arch Linux xtremesystem" --yesno "System not installed yet \n Are you sure you want to exit?" 10 60) then
 					exit
 				else
 					main_menu
